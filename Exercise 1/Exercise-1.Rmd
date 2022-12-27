@@ -1,0 +1,58 @@
+---
+title: "Exercise 1"
+output: github_document
+---
+```{r}
+library(tidyverse)
+library(camcorder)
+
+bikes <- read_csv(
+  "https://raw.githubusercontent.com/z3tt/graphic-design-ggplot2/main/data/london-bikes-custom.csv",
+  col_types = "Dcfffilllddddc"
+)
+
+bikes$season <- fct_inorder(bikes$season)
+
+weekend_bikes <- bikes %>% 
+  filter(is_weekend == TRUE)
+
+# Fix plot size
+gg_record(
+  dir = ("Exercise 1/"),
+  device = "pdf",
+  width = 16,
+  height = 9,
+  units = "cm",
+  dpi = 600
+)
+
+# Make plot
+plot_1 <- ggplot(
+                 weekend_bikes,
+                 aes(x = date, y = count)
+          ) +
+          geom_point(
+            aes(
+              color = day_night,
+              pch = day_night
+            )
+          ) +
+          geom_line(
+            aes(group = day_night)
+          ) +
+          labs(
+            title = "Weekend London Bikeshare Rides",
+            x = "Date",
+            y = "Count",
+            color = NULL,
+            shape = NULL
+          ) +
+          theme(
+            panel.background = element_rect(fill = NA, color = "gray10", linewidth = .5),
+            panel.grid.major = element_line(color = "gray10", linewidth = .25),
+            panel.grid.minor = element_blank(),
+            axis.ticks = element_blank()
+          )
+plot_1
+```
+

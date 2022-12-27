@@ -1,0 +1,44 @@
+---
+title: "Exercise 2"
+output: github_document
+---
+
+```{r Exercise 2, fig.width = 10, fig.height = 6}
+library(tidyverse)
+
+bikes <- read_csv(
+  "https://raw.githubusercontent.com/z3tt/graphic-design-ggplot2/main/data/london-bikes-custom.csv", 
+  col_types = "Dcfffilllddddc"
+)
+
+bikes$season <- fct_inorder(bikes$season)
+bikes_no_na <- na.omit(bikes)
+
+plot_2 <- ggplot(
+    data = bikes_no_na,
+    aes(x = reorder(weather_type, -count, median), y = count),
+  ) +
+  geom_boxplot(
+    aes(fill = weather_type),
+    outlier.shape = NA
+  ) +
+  geom_jitter(
+    width = 0.2,
+    height = 0,
+    alpha = 0.2,
+    aes(color = weather_type)
+  ) +
+  theme_minimal() +
+  labs(
+    title = "London Bikeshare Rides by Weather Type",
+    y = "Count",
+    x = "Weather"
+  ) +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(lineheight = 15, face = "bold")
+  )
+
+plot_2
+```
+

@@ -1,0 +1,119 @@
+Exercise 3 + 4
+================
+
+``` r
+library(tidyverse)
+```
+
+    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+    ## ✔ ggplot2 3.4.0      ✔ purrr   0.3.5 
+    ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
+    ## ✔ tidyr   1.2.1      ✔ stringr 1.5.0 
+    ## ✔ readr   2.1.3      ✔ forcats 0.5.2 
+    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+
+``` r
+diamonds <- diamonds
+
+my_colors = c(
+  `Fair` = "#4dd7fa",
+  `Good` = "#fac04d",
+  `Very Good` = "#4d6dfa",
+  `Premium` = "#fa4dbb",
+  `Ideal` = "#4dfa53"
+)
+
+diamond_plot <- ggplot(
+                  data = diamonds, 
+                  aes(x = carat, y = price)
+                ) +
+                geom_point(
+                  alpha = 0.5
+                ) +
+                facet_grid(
+                  cut ~ clarity,
+                  scales = "free_x",
+                  space = "free_x"
+                ) +
+                geom_smooth(
+                  method = "lm",
+                  se = FALSE,
+                  aes(color = cut)
+                ) +
+                theme_light() +
+                scale_color_discrete(
+                  type = my_colors,
+                  guide = "none"
+                ) +
+                scale_x_continuous(
+                  breaks = 1:5
+                ) +
+                scale_y_continuous(
+                  breaks = seq(0, 27500, by = 5000),
+                  labels = paste0("$",
+                                  format(seq(0, 27500, by = 5000),
+                                         big.mark = ",",
+                                         trim = TRUE)
+                           )
+                )
+diamond_plot
+```
+
+    ## `geom_smooth()` using formula = 'y ~ x'
+
+![](Exercise-3-4_files/figure-gfm/mid-slide%20practice-1.png)<!-- -->
+
+``` r
+library(tidyverse)
+
+bikes <- read_csv(
+  "https://raw.githubusercontent.com/z3tt/graphic-design-ggplot2/main/data/london-bikes-custom.csv", 
+  col_types = "Dcfffilllddddc"
+)
+
+bikes$season <- fct_inorder(bikes$season)
+
+season_totals <- bikes %>% 
+  group_by(season) %>% 
+  summarize(total = sum(count))
+
+polar_plot <- ggplot(data = season_totals, aes(x = season, y = total)) +
+              geom_point() +
+              geom_segment(
+                aes(x = season,
+                    xend = season,
+                    y = 0,
+                    yend = total)
+              ) +
+              annotate(
+                geom = "linerange",
+                xmin = .7, xmax = 4.3, y = 0
+              ) +
+              geom_text(
+                aes(label = season, y = 0),
+                family = "Roboto Condensed",
+                size = 4.5,
+                hjust = 1.15
+              ) +
+              geom_text(
+                aes(label = paste0(round(total / 10^6, 1), "M")),
+                size = 4, 
+                vjust = -1, 
+                family = "Roboto Condensed"
+              ) +
+              scale_y_continuous(
+                limits = c(0, 7500000),
+                expand = c(0, 0)
+              ) +
+              scale_x_discrete(
+                expand = c(0.5, 0)
+              ) +
+              coord_polar(theta = "y") +
+              theme_void() +
+              theme(plot.margin = margin(rep(-80, 4)))
+polar_plot
+```
+
+![](Exercise-3-4_files/figure-gfm/exercise%204-1.png)<!-- -->
